@@ -1,0 +1,31 @@
+#16qubit random number genertor
+from qiskit import QuantumCircuit, Aer, execute
+from qiskit.visualization import circuit_drawer
+
+# Create a quantum circuit with 16 qubits
+circuit = QuantumCircuit(18, 18)
+
+# Apply Hadamard gates to put all qubits in superposition
+circuit.h(range(18))
+
+# Measure all qubits
+circuit.measure(range(18), range(18))
+
+# Visualize the circuit
+print(circuit)
+circuit_drawer(circuit, output='mpl')
+
+# Simulate the quantum circuit using the QASM simulator
+simulator = Aer.get_backend('qasm_simulator')
+job = execute(circuit, simulator, shots=1)
+result = job.result()
+counts = result.get_counts(circuit)
+
+# Extract the random number from the measurement outcome
+random_number = int(list(counts.keys())[0], 2)
+
+# Convert the random number to binary representation
+binary_number = bin(random_number)[2:].zfill(18)
+
+print("Random number (decimal):", random_number)
+print("Random number (binary):", binary_number)
